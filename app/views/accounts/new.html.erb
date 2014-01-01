@@ -1,2 +1,14 @@
-<h1>Accounts#new</h1>
-<p>Find me in app/views/accounts/new.html.erb</p>
+<h1>Add a new account</h1>
+
+<%= semantic_form_for @account do |f| %>
+	
+	<%= f.input :name %>
+	
+	<%= f.input :description %>
+	
+	<%= f.input :current_balance %>
+	
+	<%= f.action :submit, as: :button %>
+	<%= f.action :cancel, as: :link %>
+	
+<% end %>

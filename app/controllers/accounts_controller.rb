@@ -1,4 +1,5 @@
 class AccountsController < ApplicationController
+
   def index
     @accounts = Account.all
     if @accounts.empty?
@@ -17,7 +18,8 @@ class AccountsController < ApplicationController
       redirect_to accounts_path, notice: "Your account has been created."
     else
       flash.now[:error] = @account.errors.full_messages.empty? ? "Unknown error. Please try again" : @account.errors.full_messages.to_sentence
-      render :new
+      render action: "new"
+    end
   end
   
   private
