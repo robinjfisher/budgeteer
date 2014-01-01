@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date: 2014-01-01
+  amount_in_pennies: 1
+  type: 
+  description: MyString
+  account_id: 1
+  category_id: 1
+
+two:
+  date: 2014-01-01
+  amount_in_pennies: 1
+  type: 
+  description: MyString
+  account_id: 1
+  category_id: 1
