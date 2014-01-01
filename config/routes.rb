@@ -5,6 +5,7 @@ Budgeteer::Application.routes.draw do
   get "accounts/index", as: :accounts
   get "accounts/new", as: :new_account
   post "accounts/create", as: :create_account
+  get "accounts/:id" => 'accounts#show', as: :show_account
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
