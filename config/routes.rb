@@ -1,5 +1,6 @@
 Budgeteer::Application.routes.draw do
   
+  get "categories/create"
   get "file_uploads/new"
   get "file_uploads/create"
   root 'accounts#index'
