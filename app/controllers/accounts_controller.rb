@@ -25,6 +25,8 @@ class AccountsController < ApplicationController
   def show
     @account = Account.find(params[:id])
     @categories = Category.all
+    @root_categories = Category.roots
+    @transactions = @account.transactions.includes(:category).paginate(page: params[:page], per_page: 40, order: 'date DESC')
   end
   
   private

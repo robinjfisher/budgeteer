@@ -13,7 +13,7 @@ jQuery ->
 	
 	$('#category-list').hide()
 	
-	$('.input-holder').on 'focus','.category_name', ->
+	$('table tbody tr').on 'focus','.category_name', ->
 		$('#category-list').show()
 		$('#category-list li').each ->
 			$(this).show()
@@ -41,7 +41,7 @@ jQuery ->
 		if event.keyCode is 27
 			$('#category-list').hide()
 			
-	$('.category_name').keyup (event) ->
+	$('table tbody tr').on 'keyup','.category_name', (event) ->
 		if event.keyCode is 13
 			$('#category-list').appendTo($("body"))
 			$('#category-list').hide()
@@ -79,13 +79,41 @@ jQuery ->
 		}))
 	
 	$('table tbody tr').on 'click','.payee', ->
-		$(this).replaceWith('<input class="payee-input"></input>')
+		$(this).replaceWith('<input class="payee-input form-control"></input>')
 	
 	$('table tbody tr').on 'keyup','.payee-input', (event) ->
 		if event.keyCode is 13
-			transactionId = $(this).parents("tr").attr("id").replace(/transaction-/,"")
+			input = $(this)
+			transactionId = input.parents("tr").attr("id").replace(/transaction-/,"")
 			$.ajax({
 				type:'PATCH',
 				url:'/transactions/' + transactionId,
 				data: {transaction: {payee:$(this).val()}}
-			})
+			}).done (data) ->
+				input.replaceWith(data['payee'])
+	
+	$('table tbody tr').on 'click','.category-name-holder', ->
+		transactionId = $(this).parents("tr").attr("id").replace(/transaction-/,"")
+		$(this).replaceWith('<td class="input-holder"><input class="form-control category_name" id="category_name_' + transactionId + '"></input></td>')
+
+	$('.confirm-transaction').on 'change', ->
+		transactionId = $(this).parents("tr").attr("id").replace(/transaction-/,"")
+		if this.checked
+			$.ajax({
+				type:'PATCH',
+				url:'/transactions/' + transactionId
+				data: {transaction: {payee_confirmed:this.checked}}
+			}).done (data) ->
+				if data['payee_confirmed'] is "true"
+					$(this).attr('checked','checked')
+	
+	$('.one-off-transaction').on 'change', ->
+		transactionId = $(this).parents("tr").attr("id").replace(/transaction-/,"")
+		if this.checked
+			$.ajax({
+				type:'PATCH',
+				url:'/transactions/' + transactionId
+				data: {transaction: {one_off:this.checked}}
+			}).done (data) ->
+				if data['one_off'] is "true"
+					$(this).attr('checked','checked')

@@ -1,8 +1,10 @@
 <div class="row">
-	<div class="col-lg-3">
+	<div class="col-lg-12">
 		<h3><%= @account.name %></h3>
 	</div>
-	<div class="col-lg-9">
+</div>
+<div class="row">
+	<div class="col-lg-12">
 		<p><%= link_to "Import CSV", new_file_upload_path, class: "btn btn-primary pull-right" %></p>
 		<h3>Transactions</h3>
 		<table class="table" id="transactions">
@@ -14,10 +16,12 @@
 					<th>Category</th>
 					<th>Subcategory</th>
 					<th>Amount</th>
+					<th>Confirmed</th>
+					<th>One off</th>
 				</tr>
 			</thead>
 			<tbody>
-				<% @account.transactions.sort_by(&:date).reverse.each do |t| %>
+				<% @transactions.each do |t| %>
 				<tr id="transaction-<%= t.id %>">
 					<td><%= t.date.strftime("%d %b %Y") %></td>
 					<td><%= t.description %></td>
@@ -25,11 +29,62 @@
 					<% if t.category.nil? %>
 						<td class="input-holder"><%= text_field_tag 'category[name]', t.category.try(:name), id: "category_name_#{t.id}", class: "category_name form-control" %></td>
 					<% else %>
-						<td><%= t.category.name %></td>
+						<td class="category-name-holder"><%= t.category.name %></td>
 					<% end %>
 					<td><%= t.subcategory %></td>
 					<td><%= display(t.amount_in_pennies) %></td>
+					<td><%= check_box_tag "transaction_#{t.id}_confirmed", t.payee_confirmed? ? "yes" : "no", t.payee_confirmed?, class: "confirm-transaction" %></td>
+					<td><%= check_box_tag "transaction_#{t.id}_one_off", t.one_off? ? "yes" : "no", t.one_off?, class: "one-off-transaction" %></td>
 				</tr>
+				<% end %>
+			</tbody>
+		</table>
+		<%= will_paginate @transactions %>
+	</div><!-- eo .col-lg-12 -->
+</div><!-- eo .row -->
+
+<div class="row">
+	<div class="col-lg-4">
+		<h3>Current balance: <%= display(@account.current_balance) %></h3>
+	</div>
+	<div class="col-lg-4">
+		<h3>Expected balance: <%= display(@account.expected_balance) %></h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12">
+		<table>
+			<thead>
+				<tr>
+					<th>Category</th>
+					<th>Spend in last pay period</th>
+					<th>Spend to date this pay period</th>
+					<th>Anticipated spend before pay day based on last pay period</th>
+					<th>Committed spend before pay day this period</th>
+					<th>Expected further spend before pay day</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% @root_categories.each do |cat| %>
+				<tr class="root-category">
+					<td><%= cat.name %></td>
+					<td><%= display(cat.spend_in_previous_pay_period(@account)) %></td>
+					<td><%= display(cat.spend_in_current_pay_period(@account)) %></td>
+					<td><%= display(cat.anticipated_spend_based_on_previous_pay_period(@account) - cat.committed_spend_for_pay_period(@account)) %></td>
+					<td><%= display(cat.committed_spend_for_pay_period(@account)) %></td>
+					<td><%= display(cat.anticipated_spend_based_on_previous_pay_period(@account)) %></td>
+				</tr>
+				<% cat.children.each do |sub| %>
+				<tr class="sub-category">
+					<td><%= sub.name %></td>
+					<td><%= display(sub.spend_in_previous_pay_period(@account)) %></td>
+					<td><%= display(sub.spend_in_current_pay_period(@account)) %></td>
+					<td><%= display(sub.anticipated_spend_based_on_previous_pay_period(@account) - sub.committed_spend_for_pay_period(@account)) %></td>
+					<td><%= display(sub.committed_spend_for_pay_period(@account)) %></td>
+					<td><%= display(sub.anticipated_spend_based_on_previous_pay_period(@account)) %></td>
+				</tr>
+				<% end %>
 				<% end %>
 			</tbody>
 		</table>

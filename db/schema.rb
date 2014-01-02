@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140102124006) do
+ActiveRecord::Schema.define(version: 20140102212121) do
 
   create_table "accounts", force: true do |t|
     t.string   "name"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 20140102124006) do
     t.datetime "updated_at"
     t.string   "payee"
     t.boolean  "payee_confirmed",   default: false
+    t.boolean  "one_off",           default: false
   end
 
 end
