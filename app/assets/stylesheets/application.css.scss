@@ -31,3 +31,20 @@ form {
 li {
 	list-style-type: none;
 }
+
+#category-list {
+	padding: 0;
+	border: 1px solid rgb(221,221,221);
+	width: 206px;
+	background-color: rgba(183,183,183,0.75);
+	
+	li {
+		padding: 3px;
+	}
+	
+	ol {
+		padding: 0;
+		margin-left: 1em;
+	}
+	
+}

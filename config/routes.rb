@@ -1,8 +1,5 @@
 Budgeteer::Application.routes.draw do
   
-  get "categories/create"
-  get "file_uploads/new"
-  get "file_uploads/create"
   root 'accounts#index'
   
   # Accounts
@@ -16,6 +13,11 @@ Budgeteer::Application.routes.draw do
   
   get "accounts/:id/upload/new" => 'file_uploads#new', as: :new_file_upload
   post "accounts/:id/upload" => 'file_uploads#create', as: :create_file_upload
+  
+  # Categories
+  
+  post "categories/create", as: :create_category
+  post "categories/update_transaction"
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

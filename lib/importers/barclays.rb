@@ -17,7 +17,14 @@ module Importers
     # The first row of the CSV file is headings so should be skipped
     # but error checking is built in to avoid importing anything other
     # than transactions.
-  
+    #
+    # We can also do some work on the transaction explanations to assist in parsing
+    #
+    # The UK transactions in the subcategory PAYMENT, take the form of the payee name
+    # to a maximum of 19 characters followed by 4 character groups of the form
+    # REF \d{3} \d{0,10} \d{3}. Using this information, we can parse the description
+    # to identify the payee.
+    
     def self.import(file,account)
     
       file = file

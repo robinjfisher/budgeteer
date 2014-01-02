@@ -24,6 +24,7 @@ class AccountsController < ApplicationController
   
   def show
     @account = Account.find(params[:id])
+    @categories = Category.all
   end
   
   private
