@@ -1,28 +1,45 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a personal app I've knocked together to help with budgeting.
 
-Things you may want to cover:
+I bank with Barclays and I've written an importer for the Barclays CSV format that you can export from online banking. You can write any other importers and they just need to map to the Transaction class. If you find this useful and write an importer, please let me know and I will pull so others can benefit.
 
-* Ruby version
+=== Health Warning
 
-* System dependencies
+I've written this to run locally on my Macbook; it is nowhere near production-ready. There are a bunch of horrible hacks (see the javascript required to jimmy the current balance when creating an account into an integer) and the code is awful; I just wanted to get it working. There are also a bunch of things that only work a certain way and it's likely to break if you try and do something another way. Admittedly, trying to break it only messes with your own bank balance.
 
-* Configuration
+=== Instructions
 
-* Database creation
+If you'd like a play with it, it works like any other Rails app. Create a database and start the server. The default route will ask you to create an account i.e. a bank account and provide an opening balance. From there, you can import transactions from a CSV file. There is minimal error checking on the import.
 
-* Database initialization
+Once transactions are imported, you can categorise them. Categorisation is done completely via a javascript interface and works on a tree principle i.e. main category with lots of sub-categories. Transactions can only be created in a sub-category. 
 
-* How to run the test suite
+==== Uncategorised transactions
 
-* Services (job queues, cache servers, search engines, etc.)
+Uncategorised transactions will have a text input next to them. If you have already created categories, a drop down list appears on focus and you can filter by text input and click the relevant category to fill the input and it will trigger submission to the server.
 
-* Deployment instructions
+To create new (sub)categories, type in the following format "subcategory_name in category" i.e. "Bus Travel in Transport". This will create the sub-category and if necessary the main category.
 
-* ...
+==== Categorised transactions
 
+You can edit categorised transactions by clicking on the category text. This will replace with an input box offering the same functionality as for categorised transactions.
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+==== Payees
+
+The Barclays importer attempts to extract the payee information from the description and then use this when importing to automatically categorise transactions. It has problems with payments to overseas companies but works pretty well. I've imported 3 months of transactions and by month 3, all but 7 or 8 were correctly categorised. The more you use it, the better it will get.
+
+Automatically categorised transactions can be "confirmed" via a tick box. You can also mark transactions as "one-off" - these are excluded from the projected spend reports (see below). All tick boxes are javascript based.
+
+=== Reports and pay periods
+
+I like to budget based on pay day which for me is not calendar monthly. You need to set the configuration variable "pay_period_starts" (I've put it in development.rb). This is an integer value representing the day of the month you are paid. 
+
+I've only just started work on the reports but it's sufficient for my needs. On the main account page, the table at the bottom shows:
+
+* Spend in the preceding pay period
+* Actual spend to date in this pay period
+* Anticipated spend for the rest of this pay period (based on prior period)
+* Committed spend for the rest of this pay period (looks for direct debits and standing orders and other repeat payments)
+* Total expected spend before pay day
+
+It then produces an anticipated bank balance on pay day for you. There's loads of work that could be done on this and none of the figures should be taken as gospel!
