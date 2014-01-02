@@ -21,20 +21,28 @@ module Importers
     def self.import(file,account)
     
       file = file
-    
-      CSV.foreach(file) do |row|
+      running_total = 0
       
-        t = Transaction.new
-        t.date = row[1]
-        t.amount = row[3]
-        t.subcategory = row[4]
-        t.description = row[5]
-        t.account_id = account.id
+      begin
+        CSV.foreach(file, encoding: 'windows-1251:utf-8') do |row|
       
-        unless Transaction.find_by_date_and_description(t.date,t.description) || t.date == nil || t.date == "NULL" || t.amount == 0
-          t.save
+          t = Transaction.new
+          t.date = row[1]
+          t.amount_in_pennies = row[3].gsub(/[.]/,"").to_i
+          t.subcategory = row[4]
+          t.description = row[5]
+          t.account_id = account.id
+      
+          unless Transaction.find_by_date_and_description(t.date,t.description) || t.date == nil || t.date == "NULL" || t.amount_in_pennies == 0
+            t.save
+          end
+        
+          running_total += t.amount_in_pennies
+      
         end
       
+        account.current_balance += running_total
+        account.save
       end
     
     end
