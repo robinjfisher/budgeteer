@@ -1,5 +1,6 @@
 Budgeteer::Application.routes.draw do
   
+  get "transactions/update"
   root 'accounts#index'
   
   # Accounts
@@ -18,6 +19,10 @@ Budgeteer::Application.routes.draw do
   
   post "categories/create", as: :create_category
   post "categories/update_transaction"
+  
+  # Transactions
+  
+  patch "transactions/:id" => 'transactions#update'
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

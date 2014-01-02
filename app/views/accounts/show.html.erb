@@ -10,16 +10,18 @@
 				<tr>
 					<th>Date</th>
 					<th>Description</th>
+					<th>Payee</th>
 					<th>Category</th>
 					<th>Subcategory</th>
 					<th>Amount</th>
 				</tr>
 			</thead>
 			<tbody>
-				<% @account.transactions.each do |t| %>
-				<tr>
+				<% @account.transactions.sort_by(&:date).reverse.each do |t| %>
+				<tr id="transaction-<%= t.id %>">
 					<td><%= t.date.strftime("%d %b %Y") %></td>
 					<td><%= t.description %></td>
+					<td class="payee"><%= t.payee %></td>
 					<% if t.category.nil? %>
 						<td class="input-holder"><%= text_field_tag 'category[name]', t.category.try(:name), id: "category_name_#{t.id}", class: "category_name form-control" %></td>
 					<% else %>
@@ -35,11 +37,11 @@
 </div>
 
 <ol id="category-list">
-	<% Category.roots.sort.each do |c| %>
-	<li class="root category"><%= c.name %></li>
+	<% Category.roots.sort_by(&:name).each do |c| %>
+	<li id="category-<%= c.id %>" class="root category"><%= c.name %></li>
 	<ol>
-	<% c.children.sort.each do |child| %>
-		<li class="sub category"><%= child.name %></li>
+	<% c.children.sort_by(&:name).each do |child| %>
+		<li id="category-<%= c.id %>" class="sub category"><%= child.name %></li>
 	<% end %>
 	</ol>
 	<% end %>
